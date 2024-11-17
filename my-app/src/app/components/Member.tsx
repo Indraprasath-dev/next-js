@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from "react";
+import { getMembers } from "../apiService/api";
 
 interface User {
     uid: string;
@@ -42,8 +43,7 @@ const Member = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
-            const response = await fetch('https://stag-protocol-labs-network-api.herokuapp.com/v1/members?pagination=false')
-            const jsonData = await response.json()
+            const jsonData = await getMembers();
             setTotalCount(jsonData.length)
 
             const paginatedData = jsonData.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((user: any) => ({
@@ -78,13 +78,12 @@ const Member = () => {
     }, []);
 
     const filterByRegion = (region: string) => {
-        const filtered = data.filter((user) => user.region === region);
+        let filtered = data.filter((user) => user.region === region);
         setFilterData(filtered);
         setTotalCount(filtered.length);
         console.log("filter : " + filtered.length)
     }
 
-   
     return (
         <div className=" panel ">
             <div className="filter__panel mt-20">
@@ -134,8 +133,8 @@ const Member = () => {
                         <span className="filter__span"></span>
                         <h2>Region</h2>
                         <div className="filter__region">
-                            <div><button>Africa</button></div>
-                            <div><button>Asia</button></div>
+                            <div><button onClick={() => filterByRegion("Africa")}>Africa</button></div>
+                            <div><button onClick={() => filterByRegion("Asia")}>Asia</button></div>
                             <div><button>Europe</button></div>
                             <div><button>North America</button></div>
                             <div><button>Not Defined</button></div>
@@ -148,8 +147,8 @@ const Member = () => {
                         <span className="filter__span"></span>
                         <h2>Country</h2>
                         <div className="filter__region">
-                            <div><button onClick={() => filterByRegion("Argentina")}>Argentina</button></div>
-                            <div><button onClick={() => filterByRegion("Armenia")}>Armenia</button></div>
+                            <div><button>Argentina</button></div>
+                            <div><button>Armenia</button></div>
                             <div><button>Australia</button></div>
                             <div><button>Belarus</button></div>
                             <div><button>Belgium</button></div>
