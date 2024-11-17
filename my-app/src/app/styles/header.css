@@ -1,0 +1,77 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 45px;
+    align-items: center;
+    box-shadow:  0 1px 4px 0 #e2e8f0; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 1000;
+    background-color: white;
+}
+
+.header__icon {
+    display: flex;
+    align-items: center;
+}
+
+.header__icon_logo {
+    padding-right: 30px;
+}
+
+.header__menu ul li>a {
+    display: flex;
+    color: #0f172a; 
+}
+
+.header__menu ul{
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    gap: 35px;
+}
+
+.on-focus-group {
+    border-radius: 8px; 
+    padding: 10px 12px; 
+    font-size: 14px; 
+    background-color: #f1f5f9;
+}
+
+.header__menu {
+    cursor: pointer;
+}
+
+.header__button {
+    display: flex;
+    gap:15px;
+    align-items: center;
+}
+
+.header__button_question{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
+}
+
+.header__button_join, .header__button_login  {
+    display: flex;
+    justify-content: center;
+    background-color: aqua;
+    color : white;
+    border-radius: 25px;
+    padding:8px 22px;
+    background: linear-gradient(to right, #427DFF, #44D5BB);
+    gap: 11px;
+    font-weight: 600;
+
+}
+
+.header__button_join svg {
+    display: inline-block;
+}
+
