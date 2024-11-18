@@ -9,12 +9,14 @@ export const getMembers = async () => {
         const updatedData = jsonData.map((user: any) => ({
             ...user,
             region: getRandomRegion(), 
+            country: getRandomCountry(),
+            engagementTypes: getEngagementTypes(),
         }))
 
         return updatedData
     } catch (error) {
         console.error('Error fetching members:', error)
-        return [] // Returning an empty array in case of error
+        return []
     }
 }
 
@@ -22,4 +24,16 @@ const getRandomRegion = () => {
     const regions = ["Africa", "Asia", "Europe", "NorthAmerica", "NotDefined", "Oceania", "SouthAmerica"]
     const randomIndex = Math.floor(Math.random() * regions.length)
     return regions[randomIndex]
+}
+
+const getRandomCountry = () => {
+    const country = ["Argentina", "Armenia", "Australia", "Belarus", "Belgium", "Brazil", "Cambodia", "Cameroon", "Canada", "Chile"]
+    const countryIndex = Math.floor(Math.random() * country.length)
+    return country[countryIndex]
+}
+
+const getEngagementTypes = () => {
+    const engagementTypes = ["OfficeHours", "OpenToCollaborate", "Friends", "NewMember"]
+    const engagementTypesIndex = Math.floor(Math.random() * engagementTypes.length)
+    return engagementTypes[engagementTypesIndex]
 }

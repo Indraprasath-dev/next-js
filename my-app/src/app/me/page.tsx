@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "../components/Header";
 import { getMembers } from "../apiService/api";
 import { useRouter } from "next/navigation";
@@ -29,6 +29,8 @@ interface User {
     locationUid: string;
     preferences: string | null;
     region?: string;
+    country?: string;
+    engagementTypes?: string;
 }
 
 const Member = () => {
@@ -36,30 +38,114 @@ const Member = () => {
     const [totalCount, setTotalCount] = useState(0)
     const [filterData, setFilterData] = useState<User[]>([])
     const [page, setPage] = useState(1)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)   
+    //const [isChecked, setIsChecked] = useState(false)
+
+    // const [filterStates, setFilterStates] = useState({
+    //     OfficeHours: false,
+    //     OpenToCollaborate: false,
+    //     Friends: false,
+    //     NewMember: false,
+    // });
+    
+    // type FilterType = 'OfficeHours' | 'OpenToCollaborate' | 'Friends' | 'NewMember';
+
+    // const handleCheckboxChange = (type: FilterType) => {
+    //     setFilterStates((prev) => ({
+    //         ...prev,
+    //         [type]: !prev[type],
+    //     }));
+    //     filterByEngagementType(type);
+    // };
+    
 
     const router = useRouter()
 
+    const observer = useRef<IntersectionObserver | null>(null)
+
     useEffect(() => {
         const fetchData = async () => {
-            const jsonData = await getMembers();
-            setTotalCount(jsonData.length);
-            setData(jsonData);
-            setFilterData(jsonData);
+            const jsonData = await getMembers()
+            setTotalCount(jsonData.length)
+            setData(jsonData)
+            setFilterData(jsonData.slice(0, 9))
         }
         fetchData()
     }, [])
 
+    const loadMoreData = useCallback(() => {
+        if (loading)
+            return;
+        setLoading(true);
+
+        // setTimeout(() => {
+        const newPage = page + 1;
+        setPage(newPage);
+        const startIndex = newPage * 9 - 9;
+        const newItems = data.slice(startIndex, startIndex + 9);
+        setFilterData((prev) => [...prev, ...newItems]);
+        setLoading(false);
+        // }, 1000);
+    }, [loading, page, data]);
+
+    useEffect(() => {
+        const options = {
+            root: null,
+            rootMargin: "20px",
+            threshold: 1.0
+        };
+
+        const handleObserver = (entities: IntersectionObserverEntry[]) => {
+            if (entities[0].isIntersecting && !loading) {
+                loadMoreData();
+            }
+        };
+
+        observer.current = new IntersectionObserver(handleObserver, options);
+        const currentElement = document.querySelector("#scroll-trigger");
+        if (currentElement) observer.current.observe(currentElement);
+
+        return () => {
+            if (observer.current && currentElement) {
+                observer.current.unobserve(currentElement);
+            }
+        };
+    }, [loadMoreData, loading]);
+
     const filterByRegion = (region: string) => {
-        let filtered = data.filter((user) => user.region === region);
+        let filtered = data.filter((user) => user.region === region)
         router.push(`?memberRegion=${region}`)
-        setFilterData(filtered);
-        setTotalCount(filtered.length);
-        console.log("filter : " + filtered.length)
+        setFilterData(filtered)
+        setTotalCount(filtered.length)
     }
 
+    const filterByCountry = (country: string) => {
+        let filtered = data.filter((user) => user.country === country)
+        router.push(`?memberCountry=${country}`)
+        setFilterData(filtered)
+        setTotalCount(filtered.length)
+    }
+
+    const filterByEngagementType = (OfficeHours: string) => {
+        let filtered = data.filter((user) => user.engagementTypes === OfficeHours)
+        router.push(`?memberEngagementType=${OfficeHours}`)
+        setFilterData(filtered)
+        setTotalCount(filtered.length)
+        //setIsChecked(true)
+    }
+
+    const clearFilters = () => {
+        setFilterData(data)
+        setTotalCount(data.length)
+        router.push('/me')
+        //setIsChecked(false)
+    }   
+
+
+
     return (
-        <><Header></Header>
+        <>
+            <Header></Header>
             <div className=" panel ">
                 <div className="filter__panel mt-20">
                     <div className="bg-white">
@@ -68,7 +154,7 @@ const Member = () => {
                                 Filters
                             </div>
                             <div className="filter__controls-clear">
-                                <button>Clear Filters</button>
+                                <button onClick={clearFilters}>Clear Filters</button>
                             </div>
                         </div>
                         <div className="filter__controls-span"></div>
@@ -77,28 +163,30 @@ const Member = () => {
                             <div className="filter__office-hours filter">
                                 <h3 className="filter__title">Only Show Members with Office Hours</h3>
                                 <label className="switch ">
-                                    <input type="checkbox" />
-                                    <span className="slider -ml-1"></span>
+                                    <input type="checkbox" onChange={(e) => e.target.checked ? filterByEngagementType("OfficeHours") : clearFilters()} />
+                                    {/* <input type="checkbox" checked={filterStates.OfficeHours} onChange={() => handleCheckboxChange("OfficeHours")} /> */}
+                                    {/* <input type="checkbox" onChange={() => filterByEngagementType("OfficeHours")} /> */}
+                                    <span className="slider -ml-1" ></span>
                                 </label>
                             </div>
                             <div className="filter__collaboration filter">
-                                <h3 className="filter__title">Open to Collaborate</h3>
+                                <h3 className="filter__title" >Open to Collaborate</h3>
                                 <label className="switch">
-                                    <input type="checkbox" />
+                                    <input type="checkbox"  onChange={(e) => e.target.checked ? filterByEngagementType("OpenToCollaborate") : clearFilters()}/>
                                     <span className="slider"></span>
                                 </label>
                             </div>
                             <div className="filter__friends filter">
                                 <h3 className="filter__title">Include Friends of Protocol Labs</h3>
                                 <label className="switch">
-                                    <input type="checkbox" />
+                                    <input type="checkbox"  onChange={(e) => e.target.checked ? filterByEngagementType("Friends") : clearFilters()}/>
                                     <span className="slider"></span>
                                 </label>
                             </div>
                             <div className="filter__new-members filter">
                                 <h3 className="filter__title">New Members</h3>
                                 <label className="switch">
-                                    <input type="checkbox" />
+                                    <input type="checkbox"  onChange={(e) => e.target.checked ?  filterByEngagementType("NewMember") : clearFilters()} />
                                     <span className="slider"></span>
                                 </label>
                             </div>
@@ -122,21 +210,20 @@ const Member = () => {
                             <span className="filter__span"></span>
                             <h2>Country</h2>
                             <div className="filter__region">
-                                <div><button>Argentina</button></div>
-                                <div><button>Armenia</button></div>
-                                <div><button>Australia</button></div>
-                                <div><button>Belarus</button></div>
-                                <div><button>Belgium</button></div>
-                                <div><button>Brazil</button></div>
-                                <div><button>Cambodia</button></div>
-                                <div><button>Cameroon</button></div>
-                                <div><button>Canada</button></div>
-                                <div><button>Chile</button></div>
+                                <div><button onClick={() => filterByCountry("Argentina")}>Argentina</button></div>
+                                <div><button onClick={() => filterByCountry("Armenia")}>Armenia</button></div>
+                                <div><button onClick={() => filterByCountry("Australia")}>Australia</button></div>
+                                <div><button onClick={() => filterByCountry("Belarus")}>Belarus</button></div>
+                                <div><button onClick={() => filterByCountry("Belgium")}>Belgium</button></div>
+                                <div><button onClick={() => filterByCountry("Brazil")}>Brazil</button></div>
+                                <div><button onClick={() => filterByCountry("Cambodia")}>Cambodia</button></div>
+                                <div><button onClick={() => filterByCountry("Cameroon")}>Cameroon</button></div>
+                                <div><button onClick={() => filterByCountry("Canada")}>Canada</button></div>
+                                <div><button onClick={() => filterByCountry("Chile")}>Chile</button></div>
                             </div>
                         </div>
                     </div>
                 </div>
-
 
 
                 {/* right side */}
@@ -187,7 +274,7 @@ const Member = () => {
                                     <div className="member__details">
                                         <div className="member__name">{item.name}</div>
                                         <div className="member__department">{item.region}</div>
-                                        <div className="member__role">Frontend Intern</div>
+                                        <div className="member__role">{item.country}</div>
                                     </div>
                                     <div className="member__divider"></div>
                                     <div className="member__product-container">
@@ -200,6 +287,9 @@ const Member = () => {
                             ))}
                         </div>
                     </div>
+
+                    <div id="scroll-trigger" className="infinite__scroll-trigger"></div>
+                    {loading && <div>Loading... </div>}
                 </div>
             </div>
         </>

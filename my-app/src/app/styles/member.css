@@ -5,11 +5,6 @@
 
 }
 
-.filter__panel {
-    width: 23.5%;
-    border: 1px solid black;
-}
-
 .member__content {
     width: 77.5%;
     margin-top:30px ;
@@ -108,14 +103,14 @@ input {
 }
 
 /* member card css */
-
-/* 
-.member__card-wrapper {
-    height: 100vh;
-    overflow-y: auto; 
-    position: sticky;
-    top: 0;
-} */
+ .member__card-wrapper {
+    /* overflow-y: auto;
+    height: 35.5rem;
+    scrollbar-width: thin;  */
+    /* overflow-y: auto;
+    height: 35rem; */
+    /* scrollbar-width: none;  */
+} 
 
 .member__card {
     display: flex;
@@ -123,6 +118,7 @@ input {
     margin-left: 57px;
     margin-top: 130px ;
     gap: 20px;
+    cursor:pointer;
 }
 
 .card {
@@ -174,12 +170,6 @@ input {
     justify-content: center;
     padding: 10px 0 25px 0 ;
 }
-
-/* .member__name {
-    font-weight: bold;
-    color: #333; 
-    font-size: 1.1em;
-} */
 
 .member__name {
     white-space: nowrap;

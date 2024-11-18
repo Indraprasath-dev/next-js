@@ -1,3 +1,10 @@
+.filter__panel {
+    overflow-y: auto;
+    height: 32.7rem;
+    scrollbar-width: thin; 
+    width: 23.5%;
+}
+
 .filter__controls {
     display: flex;
     justify-content: space-between;
@@ -34,7 +41,7 @@
 }
 
 .filter__title {
-    font-size: 0.9rem; /* Slightly smaller font size */
+    font-size: 0.9rem;
     font-weight: 500;
 }
 
@@ -42,8 +49,8 @@
 .switch {
     position: relative;
     display: inline-block;
-    width: 30px; /* Reduced width */
-    height: 15px; /* Reduced height */
+    width: 30px;
+    height: 15px;
 }
 
 /* Hide default checkbox appearance */
@@ -63,32 +70,32 @@
     bottom: 0;
     background-color: #ccc;
     transition: 0.4s;
-    border-radius: 15px; /* Matches new height for rounded effect */
+    border-radius: 15px;
 }
 
 /* Slider handle */
 .slider::before {
     position: absolute;
     content: "";
-    height: 11px; /* Reduced handle size */
-    width: 11px; /* Reduced handle size */
-    left: 2px; /* Adjusted to keep centered */
-    bottom: 2px; /* Adjusted to keep centered */
+    height: 11px;
+    width: 11px;
+    left: 2px;
+    bottom: 2px;
     background-color: white;
     transition: 0.4s;
     border-radius: 50%;
 }
 
 /* Toggle when checked */
-input:checked + .slider {
-    background-color: #156ff7; /* Color when checked */
+input:checked+.slider {
+    background-color: #156ff7;
 }
 
-input:checked + .slider::before {
-    transform: translateX(15px); /* Adjusted to match smaller toggle */
+input:checked+.slider::before {
+    transform: translateX(15px);
 }
 
-.filter__span{
+.filter__span {
     height: 0.8px;
     width: 100%;
     background-color: #D1D5DB;
