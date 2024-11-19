@@ -38,31 +38,17 @@ const Member = () => {
     const [totalCount, setTotalCount] = useState(0)
     const [filterData, setFilterData] = useState<User[]>([])
     const [page, setPage] = useState(1)
-    const [loading, setLoading] = useState(false)   
-    //const [isChecked, setIsChecked] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-    // const [filterStates, setFilterStates] = useState({
-    //     OfficeHours: false,
-    //     OpenToCollaborate: false,
-    //     Friends: false,
-    //     NewMember: false,
-    // });
-    
-    // type FilterType = 'OfficeHours' | 'OpenToCollaborate' | 'Friends' | 'NewMember';
-
-    // const handleCheckboxChange = (type: FilterType) => {
-    //     setFilterStates((prev) => ({
-    //         ...prev,
-    //         [type]: !prev[type],
-    //     }));
-    //     filterByEngagementType(type);
-    // };
-    
+    const [isCheckedOfficeHours, setIsCheckedOfficeHours] = useState(false)
+    const [isCheckedOpenToCollaborate, setIsCheckedOpenToCollaborate] = useState(false)
+    const [isFriends, setIsFriends] = useState(false)
+    const [isNewMember, setNewMember] = useState(false)
 
     const router = useRouter()
-
+    
     const observer = useRef<IntersectionObserver | null>(null)
-
+    
     useEffect(() => {
         const fetchData = async () => {
             const jsonData = await getMembers()
@@ -97,7 +83,7 @@ const Member = () => {
 
         const handleObserver = (entities: IntersectionObserverEntry[]) => {
             if (entities[0].isIntersecting && !loading) {
-                loadMoreData();
+                     loadMoreData();
             }
         };
 
@@ -117,6 +103,10 @@ const Member = () => {
         router.push(`?memberRegion=${region}`)
         setFilterData(filtered)
         setTotalCount(filtered.length)
+        setIsCheckedOpenToCollaborate(false)
+        setIsCheckedOfficeHours(false)
+        setIsFriends(false)
+        setNewMember(false)
     }
 
     const filterByCountry = (country: string) => {
@@ -124,24 +114,56 @@ const Member = () => {
         router.push(`?memberCountry=${country}`)
         setFilterData(filtered)
         setTotalCount(filtered.length)
+        setIsCheckedOpenToCollaborate(false)
+        setIsCheckedOfficeHours(false)
+        setIsFriends(false)
+        setNewMember(false)
     }
 
-    const filterByEngagementType = (OfficeHours: string) => {
-        let filtered = data.filter((user) => user.engagementTypes === OfficeHours)
-        router.push(`?memberEngagementType=${OfficeHours}`)
+    const filterByEngagementType = (engagementType: string) => {
+        let filtered = data.filter((user) => user.engagementTypes === engagementType)
+        router.push(`?memberEngagementType=${engagementType}`)
         setFilterData(filtered)
         setTotalCount(filtered.length)
-        //setIsChecked(true)
+        if (engagementType === "OfficeHours") {
+            setIsCheckedOfficeHours(true)
+            setIsCheckedOpenToCollaborate(false)
+            setIsFriends(false)
+            setNewMember(false)
+        }
+
+        if (engagementType === "OpenToCollaborate") {
+            setIsCheckedOpenToCollaborate(true)
+            setIsCheckedOfficeHours(false)
+            setIsFriends(false)
+            setNewMember(false)
+        }
+
+        if (engagementType === "Friends") {
+            setIsFriends(true)
+            setIsCheckedOfficeHours(false)
+            setIsCheckedOpenToCollaborate(false)
+            setNewMember(false)
+        }
+
+        if (engagementType === "NewMember") {
+            setNewMember(true)
+            setIsCheckedOpenToCollaborate(false)
+            setIsCheckedOfficeHours(false)
+            setIsFriends(false)
+        }
+
     }
 
     const clearFilters = () => {
         setFilterData(data)
         setTotalCount(data.length)
         router.push('/me')
-        //setIsChecked(false)
-    }   
-
-
+        setIsCheckedOfficeHours(false)
+        setIsCheckedOpenToCollaborate(false)
+        setIsFriends(false)
+        setNewMember(false)
+    }
 
     return (
         <>
@@ -163,7 +185,7 @@ const Member = () => {
                             <div className="filter__office-hours filter">
                                 <h3 className="filter__title">Only Show Members with Office Hours</h3>
                                 <label className="switch ">
-                                    <input type="checkbox" onChange={(e) => e.target.checked ? filterByEngagementType("OfficeHours") : clearFilters()} />
+                                    <input type="checkbox" checked={isCheckedOfficeHours} onChange={(e) => e.target.checked ? filterByEngagementType("OfficeHours") : clearFilters()} />
                                     {/* <input type="checkbox" checked={filterStates.OfficeHours} onChange={() => handleCheckboxChange("OfficeHours")} /> */}
                                     {/* <input type="checkbox" onChange={() => filterByEngagementType("OfficeHours")} /> */}
                                     <span className="slider -ml-1" ></span>
@@ -172,21 +194,21 @@ const Member = () => {
                             <div className="filter__collaboration filter">
                                 <h3 className="filter__title" >Open to Collaborate</h3>
                                 <label className="switch">
-                                    <input type="checkbox"  onChange={(e) => e.target.checked ? filterByEngagementType("OpenToCollaborate") : clearFilters()}/>
+                                    <input type="checkbox" checked={isCheckedOpenToCollaborate} onChange={(e) => e.target.checked ? filterByEngagementType("OpenToCollaborate") : clearFilters()} />
                                     <span className="slider"></span>
                                 </label>
                             </div>
                             <div className="filter__friends filter">
                                 <h3 className="filter__title">Include Friends of Protocol Labs</h3>
                                 <label className="switch">
-                                    <input type="checkbox"  onChange={(e) => e.target.checked ? filterByEngagementType("Friends") : clearFilters()}/>
+                                    <input type="checkbox" checked={isFriends} onChange={(e) => e.target.checked ? filterByEngagementType("Friends") : clearFilters()} />
                                     <span className="slider"></span>
                                 </label>
                             </div>
                             <div className="filter__new-members filter">
                                 <h3 className="filter__title">New Members</h3>
                                 <label className="switch">
-                                    <input type="checkbox"  onChange={(e) => e.target.checked ?  filterByEngagementType("NewMember") : clearFilters()} />
+                                    <input type="checkbox" checked={isNewMember} onChange={(e) => e.target.checked ? filterByEngagementType("NewMember") : clearFilters()} />
                                     <span className="slider"></span>
                                 </label>
                             </div>
@@ -286,10 +308,9 @@ const Member = () => {
                                 </div>
                             ))}
                         </div>
-                    </div>
-
-                    <div id="scroll-trigger" className="infinite__scroll-trigger"></div>
-                    {loading && <div>Loading... </div>}
+                        <div id="scroll-trigger" className="infinite__scroll-trigger"></div>
+                        {loading && <div>Loading... </div>}
+                    </div> 
                 </div>
             </div>
         </>
