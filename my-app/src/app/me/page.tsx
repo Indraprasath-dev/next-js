@@ -46,6 +46,10 @@ const Member = () => {
     const [isNewMember, setNewMember] = useState(false)
 
     const router = useRouter()
+
+    const regions = ["Africa", "Asia", "Europe", "NorthAmerica", "NotDefined", "Oceania", "SouthAmerica"]
+      
+    const countries = ["Argentina", "Armenia", "Australia", "Belarus", "Belgium", "Brazil", "Cambodia", "Cameroon", "Canada", "Chile"]
     
     const observer = useRef<IntersectionObserver | null>(null)
     
@@ -85,7 +89,7 @@ const Member = () => {
             if (entities[0].isIntersecting && !loading) {
                      loadMoreData();
             }
-        };
+        }
 
         observer.current = new IntersectionObserver(handleObserver, options);
         const currentElement = document.querySelector("#scroll-trigger");
@@ -118,7 +122,7 @@ const Member = () => {
         setIsCheckedOfficeHours(false)
         setIsFriends(false)
         setNewMember(false)
-    }
+    }   
 
     const filterByEngagementType = (engagementType: string) => {
         let filtered = data.filter((user) => user.engagementTypes === engagementType)
@@ -186,8 +190,6 @@ const Member = () => {
                                 <h3 className="filter__title">Only Show Members with Office Hours</h3>
                                 <label className="switch ">
                                     <input type="checkbox" checked={isCheckedOfficeHours} onChange={(e) => e.target.checked ? filterByEngagementType("OfficeHours") : clearFilters()} />
-                                    {/* <input type="checkbox" checked={filterStates.OfficeHours} onChange={() => handleCheckboxChange("OfficeHours")} /> */}
-                                    {/* <input type="checkbox" onChange={() => filterByEngagementType("OfficeHours")} /> */}
                                     <span className="slider -ml-1" ></span>
                                 </label>
                             </div>
@@ -218,13 +220,11 @@ const Member = () => {
                             <span className="filter__span"></span>
                             <h2>Region</h2>
                             <div className="filter__region">
-                                <div><button onClick={() => filterByRegion("Africa")}>Africa</button></div>
-                                <div><button onClick={() => filterByRegion("Asia")}>Asia</button></div>
-                                <div><button onClick={() => filterByRegion("Europe")}>Europe</button></div>
-                                <div><button onClick={() => filterByRegion("NorthAmerica")}>North America</button></div>
-                                <div><button onClick={() => filterByRegion("NotDefined")}>Not Defined</button></div>
-                                <div><button onClick={() => filterByRegion("Oceania")}>Oceania</button></div>
-                                <div><button onClick={() => filterByRegion("SouthAmerica")}>South America</button></div>
+                                {regions.map((region) => (
+                                    <div key={region}>
+                                        <button onClick={() => filterByRegion(region)}>{region}</button>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
@@ -232,21 +232,15 @@ const Member = () => {
                             <span className="filter__span"></span>
                             <h2>Country</h2>
                             <div className="filter__region">
-                                <div><button onClick={() => filterByCountry("Argentina")}>Argentina</button></div>
-                                <div><button onClick={() => filterByCountry("Armenia")}>Armenia</button></div>
-                                <div><button onClick={() => filterByCountry("Australia")}>Australia</button></div>
-                                <div><button onClick={() => filterByCountry("Belarus")}>Belarus</button></div>
-                                <div><button onClick={() => filterByCountry("Belgium")}>Belgium</button></div>
-                                <div><button onClick={() => filterByCountry("Brazil")}>Brazil</button></div>
-                                <div><button onClick={() => filterByCountry("Cambodia")}>Cambodia</button></div>
-                                <div><button onClick={() => filterByCountry("Cameroon")}>Cameroon</button></div>
-                                <div><button onClick={() => filterByCountry("Canada")}>Canada</button></div>
-                                <div><button onClick={() => filterByCountry("Chile")}>Chile</button></div>
+                                {countries.map((country) => (
+                                    <div key={country}>
+                                        <button onClick={() => filterByCountry(country)}>{country}</button>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
-
 
                 {/* right side */}
                 <div className="member__content mt-10">
