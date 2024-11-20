@@ -63,6 +63,7 @@ const Member = () => {
         fetchData()
     }, [])
 
+
     const loadMoreData = useCallback(() => {
         if (loading)
             return;
@@ -107,10 +108,7 @@ const Member = () => {
         router.push(`?memberRegion=${region}`)
         setFilterData(filtered)
         setTotalCount(filtered.length)
-        setIsCheckedOpenToCollaborate(false)
-        setIsCheckedOfficeHours(false)
-        setIsFriends(false)
-        setNewMember(false)
+        resetToggleState()
     }
 
     const filterByCountry = (country: string) => {
@@ -118,10 +116,7 @@ const Member = () => {
         router.push(`?memberCountry=${country}`)
         setFilterData(filtered)
         setTotalCount(filtered.length)
-        setIsCheckedOpenToCollaborate(false)
-        setIsCheckedOfficeHours(false)
-        setIsFriends(false)
-        setNewMember(false)
+        resetToggleState()
     }   
 
     const filterByEngagementType = (engagementType: string) => {
@@ -129,44 +124,40 @@ const Member = () => {
         router.push(`?memberEngagementType=${engagementType}`)
         setFilterData(filtered)
         setTotalCount(filtered.length)
-        if (engagementType === "OfficeHours") {
-            setIsCheckedOfficeHours(true)
-            setIsCheckedOpenToCollaborate(false)
-            setIsFriends(false)
-            setNewMember(false)
-        }
 
-        if (engagementType === "OpenToCollaborate") {
-            setIsCheckedOpenToCollaborate(true)
-            setIsCheckedOfficeHours(false)
-            setIsFriends(false)
-            setNewMember(false)
-        }
+        resetToggleState()
 
-        if (engagementType === "Friends") {
-            setIsFriends(true)
-            setIsCheckedOfficeHours(false)
-            setIsCheckedOpenToCollaborate(false)
-            setNewMember(false)
+        switch (engagementType) {
+            case "OfficeHours" : 
+                setIsCheckedOfficeHours(true)
+                break
+            case "OpenToCollaborate" :
+                setIsCheckedOpenToCollaborate(true)
+                break
+            case "Friends" :
+                setIsFriends(true)
+                break
+            case "NewMember" :
+                setNewMember(true)
+                break
+            default :
+                resetToggleState()
+                break
         }
+    }
 
-        if (engagementType === "NewMember") {
-            setNewMember(true)
-            setIsCheckedOpenToCollaborate(false)
-            setIsCheckedOfficeHours(false)
-            setIsFriends(false)
-        }
-
+    const resetToggleState = () => {
+        setIsCheckedOfficeHours(false)
+        setIsCheckedOpenToCollaborate(false)
+        setIsFriends(false)
+        setNewMember(false)
     }
 
     const clearFilters = () => {
         setFilterData(data)
         setTotalCount(data.length)
         router.push('/me')
-        setIsCheckedOfficeHours(false)
-        setIsCheckedOpenToCollaborate(false)
-        setIsFriends(false)
-        setNewMember(false)
+        resetToggleState()
     }
 
     return (
